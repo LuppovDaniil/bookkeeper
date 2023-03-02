@@ -3,6 +3,7 @@
 """
 
 from typing import Iterable, Iterator
+from bookkeeper.models.expense import Expense
 
 
 def _get_indent(line: str) -> int:
@@ -61,3 +62,12 @@ def read_tree(lines: Iterable[str]) -> list[tuple[str, str | None]]:
         last_name = name
         last_indent = indent
     return result
+
+adapters = {
+    'expense': lambda x: Expense(pk=x['pk'],
+                                  amount=x['amount'],
+                                  expense_date=x['expense_date'],
+                                  added_date=x['added_date'],
+                                  comment=x['comment'],
+                                  category=x['category'])
+}
