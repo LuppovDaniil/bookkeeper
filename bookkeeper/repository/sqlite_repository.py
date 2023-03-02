@@ -49,14 +49,43 @@ class SqliteRepository(AbstractRepository[T]):
         con.close()
         adapter = adapters[self.table_name]
 
-        return adapter(res[-1])  if res else None
+        return adapter(res[-1]) if res else None
 
     def get_all(self, where: dict[str, Any] | None = None) -> list[T]:
-        pass
+
+        with sqlite3.connect(self.db_file) as con:
+            con.row_factory = sqlite3.Row
+            cur = con.cursor()
+            cur.execute('PRAGMA foreign_keys = ON')
+            if where is None:
+                cur.execute(f'SELECT * FROM {self.table_name}')
+                res = cur.fetchall()
+            else:
+                columns, values = list(where.keys()), list(where.values())
+                cur.execute(f'SELECT * FROM {self.table_name} WHERE {values[0]}=(?)', [values[0]])
+                res = cur.fetchall()
+                if columns[1:]:
+                    res = [x_res for x_res in res if all(x_res[column] == value for column, value in zip(columns[1:],
+                                                                                                         values[1:]))]
+            adapter = adapters[self.table_name]
+            res = list(map(adapter, res))
+        con.close()
+        return res
 
     def update(self, obj: T) -> None:
-        pass
+        if obj.pk == 0:
+            raise ValueError('attempt to update object with unknown primary key')
 
+        with sqlite3.connect(self.db_file) as con:
+            cur = con.cursor()
+            con.row_factory = sqlite3.Row
+            cur.execute('PRAGMA foreign_keys = ON')
+            names = list(self.fields.keys())
+            values = [getattr(obj, x) for x in self.fields]
+            update_command = f'UPDATE {self.table_name} SET ' + ', '.join(
+                [f'{name} = ?' for name in names]) + ' WHERE pk = ?'
+            cur.execute(update_command, values + [obj.pk])
+        con.close()
     def delete(self, pk: int) -> None:
         pass
 
