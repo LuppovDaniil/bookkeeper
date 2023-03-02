@@ -49,7 +49,7 @@ class SqliteRepository(AbstractRepository[T]):
         con.close()
         adapter = adapters[self.table_name]
 
-        return adapter(res[-1])
+        return adapter(res[-1])  if res else None
 
     def get_all(self, where: dict[str, Any] | None = None) -> list[T]:
         pass
