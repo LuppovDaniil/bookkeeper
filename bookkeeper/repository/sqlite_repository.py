@@ -78,7 +78,6 @@ class SqliteRepository(AbstractRepository[T]):
 
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            con.row_factory = sqlite3.Row
             cur.execute('PRAGMA foreign_keys = ON')
             names = list(self.fields.keys())
             values = [getattr(obj, x) for x in self.fields]
@@ -87,7 +86,11 @@ class SqliteRepository(AbstractRepository[T]):
             cur.execute(update_command, values + [obj.pk])
         con.close()
     def delete(self, pk: int) -> None:
-        pass
+        with sqlite3.connect(self.db_file) as con:
+            cur = con.cursor()
+            cur.execute('PRAGMA foreign_keys = ON')
+            cur.execute(f'DELETE FROM {self.table_name} WHERE pk=  ?', [pk])
+        con.close()
 
 
 
