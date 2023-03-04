@@ -23,7 +23,8 @@ class SqliteRepository(AbstractRepository[T]):
         self.fields.pop('pk')
 
     def add(self, obj: T) -> int:
-
+        if getattr(obj, 'pk', None) != 0:
+            raise ValueError(f'trying to add object {obj} with filled `pk` attribute')
         names = ', '.join(self.fields.keys())
         p = ', '.join("?" * len(self.fields))
         values = [getattr(obj, x) for x in self.fields]
@@ -85,11 +86,14 @@ class SqliteRepository(AbstractRepository[T]):
                 [f'{name} = ?' for name in names]) + ' WHERE pk = ?'
             cur.execute(update_command, values + [obj.pk])
         con.close()
+
     def delete(self, pk: int) -> None:
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
             cur.execute('PRAGMA foreign_keys = ON')
             cur.execute(f'DELETE FROM {self.table_name} WHERE pk=  ?', [pk])
+            if cur.rowcount == 0:
+                raise KeyError('Object with such pk do not exist in the database')
         con.close()
 
 
