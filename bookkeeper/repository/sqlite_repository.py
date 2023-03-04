@@ -2,7 +2,6 @@
 Модуль описывает репозиторий, работающий в СУБД sqlite
 """
 
-from itertools import count
 from typing import Any
 from inspect import get_annotations
 from bookkeeper.utils import adapters

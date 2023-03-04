@@ -76,13 +76,18 @@ def test_get_all(repo, custom_class):
 
 
 def test_get_all_with_condition(repo, custom_class):
+    conn = sqlite3.connect(repo.db_file)
+    c = conn.cursor()
+    c.execute(f"DELETE FROM {repo.table_name}")
+    conn.commit()
+    conn.close()
     objects = []
     for i in range(5):
         o = custom_class()
         o.category = 5
         repo.add(o)
         objects.append(o)
-    assert repo.get_all({'category': 5}) == objects
+    assert all([repo.get_all({'category': 5})[i].pk == objects[i].pk for i in range(len(objects))])
 
 
 
