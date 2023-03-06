@@ -6,9 +6,14 @@ from bookkeeper.models.category import Category
 from bookkeeper.models.expense import Expense
 from bookkeeper.repository.sqlite_repository import SqliteRepository
 from bookkeeper.utils import read_tree
+import os
 
-cat_repo = SqliteRepository[Category]()
-exp_repo = SqliteRepository[Expense]()
+cwd = os.getcwd()
+
+db_file = os.path.join(cwd, 'bookkeeper', 'repository', 'project_db.db')
+
+cat_repo = SqliteRepository(db_file=db_file, cls=Category)
+exp_repo = SqliteRepository(db_file=db_file, cls=Expense)
 
 cats = '''
 продукты

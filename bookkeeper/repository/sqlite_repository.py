@@ -9,6 +9,7 @@ import sqlite3
 
 from bookkeeper.repository.abstract_repository import AbstractRepository, T
 
+
 class SqliteRepository(AbstractRepository[T]):
     """
     Репозиторий, работающий в sqlite. Хранит данные в базе данных.
@@ -61,7 +62,8 @@ class SqliteRepository(AbstractRepository[T]):
                 cur.execute(f'SELECT * FROM {self.table_name}')
                 res = cur.fetchall()
             else:
-                columns, values = list(where.keys()), list(where.values())
+                columns, values = list(where.keys()),\
+                                  list(where.values())
                 cur.execute(f'SELECT * FROM {self.table_name} WHERE {values[0]}=(?)', [values[0]])
                 res = cur.fetchall()
                 if columns[1:]:
@@ -95,9 +97,4 @@ class SqliteRepository(AbstractRepository[T]):
                 raise KeyError('Object with such pk do not exist in the database')
         con.close()
 
-
-
-
-
-        
 

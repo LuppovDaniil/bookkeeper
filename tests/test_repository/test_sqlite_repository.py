@@ -2,9 +2,9 @@ from bookkeeper.repository.sqlite_repository import SqliteRepository
 from bookkeeper.models.expense import Expense
 from datetime import datetime
 import sqlite3
+import os
 
 import pytest
-from dataclasses import dataclass, field
 
 
 @pytest.fixture
@@ -21,9 +21,14 @@ def custom_class():
             return other.pk == self.pk and other.amount == self.amount
     return Custom
 
+
+cwd = os.getcwd()
+db_file = os.path.join(cwd, 'tests', 'test_repository', 'test.db')
+
+
 @pytest.fixture
 def repo():
-    return SqliteRepository(db_file='./tests/test_repository/test.db', cls=Expense) #idk maybe shuold be more abstract
+    return SqliteRepository(db_file=db_file, cls=Expense) #idk maybe shuold be more abstract
 
 def test_crud(repo, custom_class):
     obj = custom_class()

@@ -6,6 +6,7 @@ from typing import Iterable, Iterator
 from bookkeeper.models.expense import Expense
 from typing import Any
 
+
 def _get_indent(line: str) -> int:
     return len(line) - len(line.lstrip())
 
@@ -66,8 +67,10 @@ def read_tree(lines: Iterable[str]) -> list[tuple[str, str | None]]:
 
 def expense_adapter(exp_row: dict[str, Any]) -> Expense:
 
-    return Expense(pk=exp_row['pk'], amount=exp_row['amount'], expense_date=exp_row['expense_date'],
-                   added_date=exp_row['added_date'], comment=exp_row['comment'], category=exp_row['category'])
+    return Expense(pk=exp_row['pk'], amount=exp_row['amount'],
+                   expense_date=exp_row['expense_date'],
+                   added_date=exp_row['added_date'],
+                   comment=exp_row['comment'], category=exp_row['category'])
 
 
 adapters = {
