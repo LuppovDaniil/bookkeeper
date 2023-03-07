@@ -18,13 +18,18 @@ class AmmountInput(QtWidgets.QWidget):
 
 class CategoryInput(QtWidgets.QWidget):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, cat_repo, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.layout = QtWidgets.QFormLayout()
         self.label = QtWidgets.QLabel('Категория')
         self.input = QtWidgets.QComboBox()
-        self.input.addItems(["Feature 1", "Feature 2", "Feature 3"])
+
+        cats = cat_repo.get_all()
+
+        features_list = [cat.name for cat in cats]
+
+        self.input.addItems(features_list)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.input)
         self.setLayout(self.layout)
@@ -35,10 +40,11 @@ class CategoryInput(QtWidgets.QWidget):
 
 class AddPurchase(QtWidgets.QWidget):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, cat_repo, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.category_input = CategoryInput()
+        self.cat_repo = cat_repo
+        self.category_input = CategoryInput(self.cat_repo)
         self.amount_input = AmmountInput()
         self.submit_button = QtWidgets.QPushButton('Добавить')
 

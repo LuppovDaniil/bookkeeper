@@ -4,6 +4,7 @@
 
 from typing import Iterable, Iterator
 from bookkeeper.models.expense import Expense
+from bookkeeper.models.category import Category
 from typing import Any
 
 
@@ -73,6 +74,12 @@ def expense_adapter(exp_row: dict[str, Any]) -> Expense:
                    comment=exp_row['comment'], category=exp_row['category'])
 
 
+def category_adapter(cat_row: dict[str, Any]) -> Category:
+
+    return Category(pk=cat_row['pk'], name=cat_row['name'],
+                    parent=cat_row['parent'])
+
 adapters = {
-    'expense': expense_adapter
+    'expense': expense_adapter,
+    'category': category_adapter
 }
