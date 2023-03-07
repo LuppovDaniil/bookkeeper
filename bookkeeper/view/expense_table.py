@@ -4,7 +4,7 @@ from PySide6 import QtWidgets
 class ExpensesTable(QtWidgets.QTableWidget):
     columns = ["Дата", "Сумма", "Категория", "Комментарий"]
 
-    def __init__(self, exp_repo, *args, **kwargs):
+    def __init__(self, cat_repo, exp_repo, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
 
@@ -28,6 +28,7 @@ class ExpensesTable(QtWidgets.QTableWidget):
         self.verticalHeader().hide()
 
         self.exp_repo = exp_repo
+        self.cat_repo = cat_repo
 
         self.cellChanged.connect(self.handleCellChanged)
 
@@ -56,9 +57,7 @@ class ExpensesTable(QtWidgets.QTableWidget):
 
         expenses = self.exp_repo.get_all()
 
-        replace_dict = {}
-
-        table.cellChanged.disconnect()
+        self.cellChanged.disconnect()
         row_count = self.rowCount()
 
         for i, expense in enumerate(expenses):
@@ -66,7 +65,8 @@ class ExpensesTable(QtWidgets.QTableWidget):
                 self.insertRow(i)
             self.setItem(i, 0, QtWidgets.QTableWidgetItem(expense.added_date))
             self.setItem(i, 1, QtWidgets.QTableWidgetItem(str(expense.amount)))
-            self.setItem(i, 2, QtWidgets.QTableWidgetItem(str(expense.category)))
+            category = self.cat_repo.get(expense.category).name
+            self.setItem(i, 2, QtWidgets.QTableWidgetItem(category))
             self.setItem(i, 3, QtWidgets.QTableWidgetItem(expense.comment))
             self.pk_row_dict[i] = expense.pk
 

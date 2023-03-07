@@ -64,7 +64,7 @@ class SqliteRepository(AbstractRepository[T]):
             else:
                 columns, values = list(where.keys()),\
                                   list(where.values())
-                cur.execute(f'SELECT * FROM {self.table_name} WHERE {values[0]}=(?)', [values[0]])
+                cur.execute(f'SELECT * FROM {self.table_name} WHERE {columns[0]}=(?)', [values[0]])
                 res = cur.fetchall()
                 if columns[1:]:
                     res = [x_res for x_res in res if all(x_res[column] == value for column, value in zip(columns[1:],
