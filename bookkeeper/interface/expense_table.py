@@ -1,10 +1,10 @@
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtWidgets
 
 
 class ExpensesTable(QtWidgets.QTableWidget):
     columns = ["Дата", "Сумма", "Категория", "Комментарий"]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, exp_repo, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
 
@@ -23,14 +23,42 @@ class ExpensesTable(QtWidgets.QTableWidget):
             3, QtWidgets.QHeaderView.Stretch)
 
         self.setEditTriggers(
-            QtWidgets.QAbstractItemView.NoEditTriggers)
+            QtWidgets.QTableWidget.DoubleClicked)
 
         self.verticalHeader().hide()
 
-    def fill_table(self, exp_repo):
+        self.exp_repo = exp_repo
 
-        expenses = exp_repo.get_all()
+        self.cellChanged.connect(self.handleCellChanged)
 
+        self.pk_row_dict = {}
+
+    def handleCellChanged(self, row, column):
+        # Retrieve the new value from the table
+        new_value = self.item(row, column).text()
+
+        pk = self.pk_row_dict[row]
+
+        changed_row = self.exp_repo.get(pk)
+
+        if column == 0:
+            changed_row.added_date = new_value
+        elif column == 1:
+            changed_row.amount = new_value
+        elif column == 2:
+            changed_row.category = new_value
+        else:
+            changed_row.comment = new_value
+
+        self.exp_repo.update(changed_row)
+
+    def fill_table(self):
+
+        expenses = self.exp_repo.get_all()
+
+        replace_dict = {}
+
+        table.cellChanged.disconnect()
         row_count = self.rowCount()
 
         for i, expense in enumerate(expenses):
@@ -40,4 +68,7 @@ class ExpensesTable(QtWidgets.QTableWidget):
             self.setItem(i, 1, QtWidgets.QTableWidgetItem(str(expense.amount)))
             self.setItem(i, 2, QtWidgets.QTableWidgetItem(str(expense.category)))
             self.setItem(i, 3, QtWidgets.QTableWidgetItem(expense.comment))
+            self.pk_row_dict[i] = expense.pk
+
+        self.cellChanged.connect(self.handleCellChanged)
 
