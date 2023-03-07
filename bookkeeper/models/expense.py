@@ -19,7 +19,7 @@ class Expense:
     """
     amount: int
     category: int
-    expense_date: str = datetime.now().strftime("%d/%m/%Y, %H:%M")
-    added_date: str = datetime.now().strftime("%d/%m/%Y, %H:%M")
+    expense_date: str = datetime.now().strftime("%H:%M, %d/%m/%Y")
+    added_date: str = datetime.now().strftime("%H:%M, %d/%m/%Y")
     comment: str = ''
     pk: int = 0
