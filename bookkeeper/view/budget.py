@@ -1,7 +1,9 @@
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtCore
 
 
 class BudgetTable(QtWidgets.QTableWidget):
+    budget_updated = QtCore.Signal()
+
     columns = ["Сумма", "Бюджет"]
     rows = ['День', 'Неделя', 'Месяц']
 
@@ -40,8 +42,9 @@ class BudgetTable(QtWidgets.QTableWidget):
         budgets = self.budget_repo.get_all()
 
         for i in range(len(self.rows)):
-            self.setItem(i, 0, QtWidgets.QTableWidgetItem(str(budgets[i].remaining_sum)))
+            self.setItem(i, 0, QtWidgets.QTableWidgetItem(str(budgets[i].cur_sum)))
             self.setItem(i, 1, QtWidgets.QTableWidgetItem(str(budgets[i].budget)))
+        self.budget_updated.emit()
 
     def handleCellChanged(self, row, column):
 
@@ -50,8 +53,11 @@ class BudgetTable(QtWidgets.QTableWidget):
         changed_row = self.budget_repo.get(pk)
 
         if column == 0:
-            changed_row.remaining_sum = new_value
+            changed_row.cur_sum = new_value
         elif column == 1:
             changed_row.budget = new_value
 
         self.budget_repo.update(changed_row)
+
+        self.budget_updated.emit()
+

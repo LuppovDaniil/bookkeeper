@@ -82,7 +82,7 @@ def category_adapter(cat_row: dict[str, Any]) -> Category:
 def budget_adapter(budget_row: dict[str, Any]) -> Budget:
     return Budget(pk=int(budget_row['pk']),
                   budget=int(budget_row['budget']),
-                  remaining_sum=int(budget_row['remaining_sum'])
+                  cur_sum=int(budget_row['cur_sum'])
                   )
 
 

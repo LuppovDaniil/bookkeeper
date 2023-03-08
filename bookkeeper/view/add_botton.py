@@ -44,6 +44,7 @@ class AddPurchase(QtWidgets.QWidget):
     data_updated = QtCore.Signal()
 
     def __init__(self, cat_repo, exp_repo, budget_repo, *args, **kwargs):
+
         super().__init__(*args, **kwargs)
 
         self.cat_repo = cat_repo
@@ -62,7 +63,19 @@ class AddPurchase(QtWidgets.QWidget):
         self.vbox.addWidget(self.submit_button)
         self.setLayout(self.vbox)
 
+    @QtCore.Slot()
+    def budget_update_response(self):
+
+        budgets = self.budget_repo.get_all()
+        flag = []
+        for budget in budgets:
+            flag.append(budget.cur_sum <= budget.budget)
+
+        self.submit_button.setEnabled(all(flag))
+        self.submit_button.setText('Добавить' if all(flag) else 'Бюджет исчерпан!')
+
     def submit(self):
+
         category = self.cat_repo.get_all(where={'name': self.category_input.category()})[0].pk
         added_exp = Expense(category=category,
                             amount=self.amount_input.amount())
