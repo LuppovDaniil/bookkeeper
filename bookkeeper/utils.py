@@ -5,6 +5,7 @@
 from typing import Iterable, Iterator
 from bookkeeper.models.expense import Expense
 from bookkeeper.models.category import Category
+from bookkeeper.models.budget import Budget
 from typing import Any
 
 
@@ -67,7 +68,6 @@ def read_tree(lines: Iterable[str]) -> list[tuple[str, str | None]]:
 
 
 def expense_adapter(exp_row: dict[str, Any]) -> Expense:
-
     return Expense(pk=exp_row['pk'], amount=exp_row['amount'],
                    expense_date=exp_row['expense_date'],
                    added_date=exp_row['added_date'],
@@ -75,11 +75,19 @@ def expense_adapter(exp_row: dict[str, Any]) -> Expense:
 
 
 def category_adapter(cat_row: dict[str, Any]) -> Category:
-
     return Category(pk=cat_row['pk'], name=cat_row['name'],
                     parent=cat_row['parent'])
 
+
+def budget_adapter(budget_row: dict[str, Any]) -> Budget:
+    return Budget(pk=budget_row['pk'],
+                  budget=budget_row['budget'],
+                  remaining_sum=budget_row['remaining_sum']
+                  )
+
+
 adapters = {
+    'budget': budget_adapter,
     'expense': expense_adapter,
     'category': category_adapter
 }
