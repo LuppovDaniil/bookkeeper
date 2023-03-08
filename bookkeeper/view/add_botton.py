@@ -1,4 +1,4 @@
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtCore
 
 from bookkeeper.models.expense import Expense
 
@@ -15,7 +15,7 @@ class AmountInput(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
     def amount(self):
-        return self.input.text()
+        return int(self.input.text())
 
 
 class CategoryInput(QtWidgets.QWidget):
@@ -41,12 +41,15 @@ class CategoryInput(QtWidgets.QWidget):
 
 
 class AddPurchase(QtWidgets.QWidget):
+    data_updated = QtCore.Signal()
 
-    def __init__(self, cat_repo, exp_repo, *args, **kwargs):
+    def __init__(self, cat_repo, exp_repo, budget_repo, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.cat_repo = cat_repo
         self.exp_repo = exp_repo
+        self.budget_repo = budget_repo
+
         self.category_input = CategoryInput(self.cat_repo)
         self.amount_input = AmountInput()
         self.submit_button = QtWidgets.QPushButton('Добавить')
@@ -62,5 +65,13 @@ class AddPurchase(QtWidgets.QWidget):
     def submit(self):
         category = self.cat_repo.get_all(where={'name': self.category_input.category()})[0].pk
         added_exp = Expense(category=category,
-                            amount=int(self.amount_input.amount()))
+                            amount=self.amount_input.amount())
         self.exp_repo.add(added_exp)
+
+        budgets = self.budget_repo.get_all()
+
+        for budget in budgets:
+            budget.register_purchase(self.amount_input.amount())
+            self.budget_repo.update(budget)
+
+        self.data_updated.emit()

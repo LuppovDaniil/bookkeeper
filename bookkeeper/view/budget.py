@@ -30,16 +30,18 @@ class BudgetTable(QtWidgets.QTableWidget):
 
         self.budget_repo = budget_repo
 
+        self.setEditTriggers(
+            QtWidgets.QTableWidget.DoubleClicked)
+
+        self.cellChanged.connect(self.handleCellChanged)
+
+    def fill_table(self):
+
         budgets = self.budget_repo.get_all()
 
         for i in range(len(self.rows)):
             self.setItem(i, 0, QtWidgets.QTableWidgetItem(str(budgets[i].remaining_sum)))
             self.setItem(i, 1, QtWidgets.QTableWidgetItem(str(budgets[i].budget)))
-
-        self.setEditTriggers(
-            QtWidgets.QTableWidget.DoubleClicked)
-
-        self.cellChanged.connect(self.handleCellChanged)
 
     def handleCellChanged(self, row, column):
 

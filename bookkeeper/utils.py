@@ -68,10 +68,10 @@ def read_tree(lines: Iterable[str]) -> list[tuple[str, str | None]]:
 
 
 def expense_adapter(exp_row: dict[str, Any]) -> Expense:
-    return Expense(pk=exp_row['pk'], amount=exp_row['amount'],
+    return Expense(pk=int(exp_row['pk']), amount=int(exp_row['amount']),
                    expense_date=exp_row['expense_date'],
                    added_date=exp_row['added_date'],
-                   comment=exp_row['comment'], category=exp_row['category'])
+                   comment=exp_row['comment'], category=int(exp_row['category']))
 
 
 def category_adapter(cat_row: dict[str, Any]) -> Category:
@@ -80,9 +80,9 @@ def category_adapter(cat_row: dict[str, Any]) -> Category:
 
 
 def budget_adapter(budget_row: dict[str, Any]) -> Budget:
-    return Budget(pk=budget_row['pk'],
-                  budget=budget_row['budget'],
-                  remaining_sum=budget_row['remaining_sum']
+    return Budget(pk=int(budget_row['pk']),
+                  budget=int(budget_row['budget']),
+                  remaining_sum=int(budget_row['remaining_sum'])
                   )
 
 
