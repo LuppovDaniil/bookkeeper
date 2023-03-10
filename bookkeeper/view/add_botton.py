@@ -23,11 +23,12 @@ class CategoryInput(QtWidgets.QWidget):
     def __init__(self, cat_repo, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.cat_repo = cat_repo
         self.layout = QtWidgets.QFormLayout()
         self.label = QtWidgets.QLabel('Категория')
         self.input = QtWidgets.QComboBox()
 
-        cats = cat_repo.get_all()
+        cats = self.cat_repo.get_all()
 
         features_list = [cat.name for cat in cats]
 
@@ -38,6 +39,12 @@ class CategoryInput(QtWidgets.QWidget):
 
     def category(self):
         return self.input.currentText()
+
+    @QtCore.Slot()
+    def categories_edited_response(self):
+        cats = self.cat_repo.get_all()
+        features_list = [cat.name for cat in cats]
+        self.input.addItems(features_list)
 
 
 class AddPurchase(QtWidgets.QWidget):
