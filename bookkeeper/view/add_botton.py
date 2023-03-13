@@ -1,26 +1,54 @@
+"""
+Мудль для виджета кнопки добавления расходов
+"""
 from PySide6 import QtWidgets, QtCore
+from PySide6.QtGui import QIntValidator
 
 from bookkeeper.models.expense import Expense
 
 
 class AmountInput(QtWidgets.QWidget):
+    """
+    Виджет для ввода цены
+    """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.layout = QtWidgets.QHBoxLayout()
         self.label = QtWidgets.QLabel('Сумма')
         self.input = QtWidgets.QLineEdit('0')
+
+        validator = QIntValidator()
+        self.input.setValidator(validator)
+
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.input)
         self.setLayout(self.layout)
 
-    def amount(self):
+    def amount(self) -> int:
+        """
+        Возвращает введенные пользователем данные о
+        Returns
+        -------
+
+        """
         return int(self.input.text())
 
 
 class CategoryInput(QtWidgets.QWidget):
+    """
+    Виджет для ввода категории
+    """
 
     def __init__(self, cat_repo, *args, **kwargs):
+        """
+
+        Parameters
+        ----------
+        cat_repo - репозиторий с категориями
+        args
+        kwargs
+        """
         super().__init__(*args, **kwargs)
 
         self.cat_repo = cat_repo
@@ -37,20 +65,45 @@ class CategoryInput(QtWidgets.QWidget):
         self.layout.addWidget(self.input)
         self.setLayout(self.layout)
 
-    def category(self):
+    def category(self) -> str:
+        """
+
+        Returns выбранная пользователем категория расходов
+        -------
+
+        """
         return self.input.currentText()
 
     @QtCore.Slot()
-    def categories_edited_response(self):
+    def categories_edited_response(self) -> None:
+        """
+        Перегрузка списка категорий в ответ на его изменение
+        Returns
+        -------
+
+        """
         cats = self.cat_repo.get_all()
         features_list = [cat.name for cat in cats]
         self.input.addItems(features_list)
 
 
 class AddPurchase(QtWidgets.QWidget):
+    """
+    Виджет, объединяющий ввод цены, выбор категории и подтверждение ввода
+    """
     data_updated = QtCore.Signal()
 
-    def __init__(self, cat_repo, exp_repo, budget_repo, *args, **kwargs):
+    def __init__(self, cat_repo, exp_repo, budget_repo, *args, **kwargs) -> None:
+        """
+
+        Parameters
+        ----------
+        cat_repo - репозиторий с категориями
+        exp_repo - репозиторий с расходами
+        budget_repo - репозиторий с бюджетом
+        args
+        kwargs
+        """
 
         super().__init__(*args, **kwargs)
 
@@ -71,8 +124,10 @@ class AddPurchase(QtWidgets.QWidget):
         self.setLayout(self.vbox)
 
     @QtCore.Slot()
-    def budget_update_response(self):
-
+    def budget_update_response(self) -> None:
+        """
+        Блокировка/Разблокировка кнопки в ответ на изменение бюджета
+        """
         budgets = self.budget_repo.get_all()
         flag = []
         for budget in budgets:
@@ -81,8 +136,10 @@ class AddPurchase(QtWidgets.QWidget):
         self.submit_button.setEnabled(all(flag))
         self.submit_button.setText('Добавить' if all(flag) else 'Бюджет исчерпан!')
 
-    def submit(self):
-
+    def submit(self) -> None:
+        """
+        Обработка подтверждения покупки
+        """
         category = self.cat_repo.get_all(where={'name': self.category_input.category()})[0].pk
         added_exp = Expense(category=category,
                             amount=self.amount_input.amount())

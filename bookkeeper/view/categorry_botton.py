@@ -1,14 +1,30 @@
+"""
+Модуль с кнопкой для редактирования списка категорий
+"""
+
 from PySide6 import QtCore, QtWidgets
 
 from bookkeeper.models.category import Category
+from bookkeeper.repository.sqlite_repository import SqliteRepository
 
 
 class CategoryTable(QtWidgets.QTableWidget):
+    """
+    Виджет с таблицей категорий
+    """
     data_updated = QtCore.Signal()
 
     columns = ['pk', 'имя', 'родитель']
 
-    def __init__(self, cat_repo, *args, **kwargs):
+    def __init__(self, cat_repo: SqliteRepository, *args, **kwargs) -> None:
+        """
+
+        Parameters
+        ----------
+        cat_repo - репозиторий с категориями расходов
+        args
+        kwargs
+        """
 
         super().__init__(*args, **kwargs)
 
@@ -47,7 +63,17 @@ class CategoryTable(QtWidgets.QTableWidget):
 
         self.cellChanged.connect(self.handleCellChanged)
 
-    def handleCellChanged(self, row, column):
+    def handleCellChanged(self, row, column) -> None:
+
+        """
+        Перезапись базы данных в ответ на действие пользователя
+        Parameters
+        ----------
+        row - строка, на которую воздействовал пользователь
+        column - столбец, на которую воздействовал пользователь
+
+
+        """
 
         new_name = self.item(row, 1).text()
         if self.item(row, 2):
@@ -69,8 +95,19 @@ class CategoryTable(QtWidgets.QTableWidget):
 
 
 class AddCategory(QtWidgets.QWidget):
+    """
+    Кнопка для возова окна редактирования категорий
+    """
 
-    def __init__(self, cat_repo, *args, **kwargs):
+    def __init__(self, cat_repo: SqliteRepository, *args, **kwargs) -> None:
+        """
+
+        Parameters
+        ----------
+        cat_repo - repository with categories
+        args
+        kwargs
+        """
         super().__init__(*args, **kwargs)
 
         self.cat_repo = cat_repo
@@ -84,7 +121,10 @@ class AddCategory(QtWidgets.QWidget):
 
         self.category_table = CategoryTable(self.cat_repo)
 
-    def submit(self):
+    def submit(self) -> None:
+        """
+        Реакция на нажатие кнопки пользователем
+        """
         category_window = self.category_table
         category_window.setWindowTitle("Категории расходов")
         category_window.show()

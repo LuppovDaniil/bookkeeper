@@ -15,7 +15,7 @@ from bookkeeper.view.expense_table import ExpensesTable
 
 class MainWindow(QtWidgets.QWidget):
 
-    def __init__(self, cat_repo, exp_repo, budget_repo, *args, **kwargs):
+    def __init__(self, cat_repo: SqliteRepository, exp_repo: SqliteRepository, budget_repo: SqliteRepository, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.cat_repo = cat_repo
@@ -47,6 +47,9 @@ class MainWindow(QtWidgets.QWidget):
         self.vbox.addWidget(self.AddPurchase)
         self.vbox.addWidget(self.AddCategory)
         self.setLayout(self.vbox)
+
+        self.setGeometry(100, 100, 1600, 900)
+        self.setWindowTitle("Гроссбухъ MVP")
 
 
 if __name__ == '__main__':

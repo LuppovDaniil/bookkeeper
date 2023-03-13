@@ -1,10 +1,23 @@
-from PySide6 import QtWidgets
+"""
+Модуль для вывода таблицы расходов
+"""
 
+from PySide6 import QtWidgets
+from bookkeeper.repository.sqlite_repository import SqliteRepository
 
 class ExpensesTable(QtWidgets.QTableWidget):
     columns = ["Дата", "Сумма", "Категория", "Комментарий"]
 
-    def __init__(self, cat_repo, exp_repo, *args, **kwargs):
+    def __init__(self, cat_repo: SqliteRepository, exp_repo: SqliteRepository, *args, **kwargs) -> None:
+        """
+        Widget with expense table
+        Parameters
+        ----------
+        cat_repo - repository for category data
+        exp_repo - repository for expenses
+        args
+        kwargs
+        """
 
         super().__init__(*args, **kwargs)
 
@@ -34,8 +47,15 @@ class ExpensesTable(QtWidgets.QTableWidget):
 
         self.pk_row_dict = {}
 
-    def handleCellChanged(self, row, column):
-        # Retrieve the new value from the table
+    def handleCellChanged(self, row: int, column: int) -> None:
+        """
+        Rewrite database according to inputted data
+        Parameters
+        ----------
+        row - changed row
+        column - changed column
+
+        """
         new_value = self.item(row, column).text()
 
         pk = self.pk_row_dict[row]
@@ -53,7 +73,13 @@ class ExpensesTable(QtWidgets.QTableWidget):
 
         self.exp_repo.update(changed_row)
 
-    def fill_table(self):
+    def fill_table(self) -> None:
+        """
+        Fill the table widget with data from Expense repository
+        Returns
+        -------
+
+        """
 
         expenses = self.exp_repo.get_all()
 

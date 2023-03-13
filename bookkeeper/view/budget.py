@@ -1,13 +1,29 @@
+"""
+Модуль содержащий виджет для таблицы с бюджетом
+"""
+
 from PySide6 import QtWidgets, QtCore
+from bookkeeper.repository.sqlite_repository import SqliteRepository
 
 
 class BudgetTable(QtWidgets.QTableWidget):
+    """
+    Виджет для отображения таблицы с бюджетом
+    """
     budget_updated = QtCore.Signal()
 
     columns = ["Сумма", "Бюджет"]
     rows = ['День', 'Неделя', 'Месяц']
 
-    def __init__(self, budget_repo, *args, **kwargs):
+    def __init__(self, budget_repo: SqliteRepository, *args, **kwargs) -> None:
+        """
+
+        Parameters
+        ----------
+        budget_repo - репозиторий с бюджетом
+        args
+        kwargs
+        """
 
         super().__init__(*args, **kwargs)
 
@@ -37,7 +53,10 @@ class BudgetTable(QtWidgets.QTableWidget):
 
         self.cellChanged.connect(self.handleCellChanged)
 
-    def fill_table(self):
+    def fill_table(self) -> None:
+        """
+        Заполнение виджета данными из базы данных
+        """
 
         budgets = self.budget_repo.get_all()
 
@@ -46,7 +65,15 @@ class BudgetTable(QtWidgets.QTableWidget):
             self.setItem(i, 1, QtWidgets.QTableWidgetItem(str(budgets[i].budget)))
         self.budget_updated.emit()
 
-    def handleCellChanged(self, row, column):
+    def handleCellChanged(self, row: int, column: int) -> None:
+        """
+        Регистрация изменения в таблице с бюджетом
+        Parameters
+        ----------
+        row - измененная строка
+        column - измененный столбец
+
+        """
 
         new_value = self.item(row, column).text()
         pk = row + 1
