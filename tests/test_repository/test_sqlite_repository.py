@@ -1,5 +1,8 @@
 from bookkeeper.repository.sqlite_repository import SqliteRepository
 from bookkeeper.models.expense import Expense
+from bookkeeper.models.category import Category
+from bookkeeper.models.budget import Budget
+from bookkeeper.utils import expense_adapter, category_adapter, budget_adapter
 from datetime import datetime
 import sqlite3
 import os
@@ -19,6 +22,7 @@ def custom_class():
 
         def __eq__(self, other):
             return other.pk == self.pk and other.amount == self.amount
+
     return Custom
 
 
@@ -28,7 +32,8 @@ db_file = os.path.join(cwd, 'tests', 'test_repository', 'test.db')
 
 @pytest.fixture
 def repo():
-    return SqliteRepository(db_file=db_file, cls=Expense) #idk maybe shuold be more abstract
+    return SqliteRepository(db_file=db_file, cls=Expense)  # idk maybe shuold be more abstract
+
 
 def test_crud(repo, custom_class):
     obj = custom_class()
@@ -95,4 +100,18 @@ def test_get_all_with_condition(repo, custom_class):
     assert all([repo.get_all({'category': 5})[i].pk == objects[i].pk for i in range(len(objects))])
 
 
+def test_expense_adapter():
+    exp_row = {'pk': 0, 'amount': 0, "expense_date": datetime.now().strftime("%d/%m/%Y, %H:%M"),
+               'added_date': datetime.now().strftime("%d/%m/%Y, %H:%M"),
+               "comment": '', 'category': 0}
+    assert isinstance(expense_adapter(exp_row), Expense)
 
+
+def test_category_adapter():
+    cat_row = {'pk': 0, 'name': 'test', 'parent': None}
+    assert isinstance(category_adapter(cat_row), Category)
+
+
+def test_budget_adapter():
+    budget_row = {'pk': 0, 'budget': 0, 'cur_sum': 0}
+    assert isinstance(budget_adapter(budget_row), Budget)

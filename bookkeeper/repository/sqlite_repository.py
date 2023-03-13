@@ -75,6 +75,7 @@ class SqliteRepository(AbstractRepository[T]):
         return res
 
     def update(self, obj: T) -> None:
+
         if obj.pk == 0:
             raise ValueError('attempt to update object with unknown primary key')
 
