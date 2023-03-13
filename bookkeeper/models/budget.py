@@ -1,3 +1,6 @@
+"""
+модуль с моделью бюджета
+"""
 from dataclasses import dataclass
 
 
@@ -10,5 +13,3 @@ class Budget:
 
     def register_purchase(self, cost):
         self.cur_sum += cost
-
-

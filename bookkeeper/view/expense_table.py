@@ -5,10 +5,15 @@
 from PySide6 import QtWidgets
 from bookkeeper.repository.sqlite_repository import SqliteRepository
 
+
 class ExpensesTable(QtWidgets.QTableWidget):
+    """
+    виджет для таблицы с расходами
+    """
     columns = ["Дата", "Сумма", "Категория", "Комментарий"]
 
-    def __init__(self, cat_repo: SqliteRepository, exp_repo: SqliteRepository, *args, **kwargs) -> None:
+    def __init__(self, cat_repo: SqliteRepository, exp_repo: SqliteRepository,
+                 *args, **kwargs) -> None:
         """
         Widget with expense table
         Parameters
@@ -97,4 +102,3 @@ class ExpensesTable(QtWidgets.QTableWidget):
             self.pk_row_dict[i] = expense.pk
 
         self.cellChanged.connect(self.handleCellChanged)
-

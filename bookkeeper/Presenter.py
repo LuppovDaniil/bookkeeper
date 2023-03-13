@@ -1,3 +1,6 @@
+"""
+Модуль с главным окном программы
+"""
 import os
 import sys
 
@@ -14,8 +17,21 @@ from bookkeeper.view.expense_table import ExpensesTable
 
 
 class MainWindow(QtWidgets.QWidget):
+    """
+    Виджет с главным окном программы
+    """
+    def __init__(self, cat_repo: SqliteRepository, exp_repo: SqliteRepository,
+                 budget_repo: SqliteRepository, *args, **kwargs) -> None:
+        """
 
-    def __init__(self, cat_repo: SqliteRepository, exp_repo: SqliteRepository, budget_repo: SqliteRepository, *args, **kwargs):
+        Parameters
+        ----------
+        cat_repo - репозиторий с категориями трат
+        exp_repo - репозторий с тратами
+        budget_repo - репозиторий с бюджетом
+        args
+        kwargs
+        """
         super().__init__(*args, **kwargs)
 
         self.cat_repo = cat_repo
@@ -36,7 +52,8 @@ class MainWindow(QtWidgets.QWidget):
         self.AddPurchase.BudgetTable = self.BudgetTable
         self.BudgetTable.budget_updated.connect(self.AddPurchase.budget_update_response)
 
-        self.AddCategory.category_table.data_updated.connect(self.AddPurchase.category_input.categories_edited_response)
+        self.AddCategory.category_table.data_updated \
+            .connect(self.AddPurchase.category_input.categories_edited_response)
 
         self.ExpensesTable.fill_table()
         self.BudgetTable.fill_table()

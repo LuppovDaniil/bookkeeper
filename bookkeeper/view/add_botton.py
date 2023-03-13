@@ -140,7 +140,8 @@ class AddPurchase(QtWidgets.QWidget):
         """
         Обработка подтверждения покупки
         """
-        category = self.cat_repo.get_all(where={'name': self.category_input.category()})[0].pk
+        category = self.cat_repo. \
+            get_all(where={'name': self.category_input.category()})[0].pk
         added_exp = Expense(category=category,
                             amount=self.amount_input.amount())
         self.exp_repo.add(added_exp)

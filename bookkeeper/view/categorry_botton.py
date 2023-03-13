@@ -52,7 +52,8 @@ class CategoryTable(QtWidgets.QTableWidget):
             pk_item.setFlags(pk_item.flags() & ~QtCore.Qt.ItemIsEditable)
 
             name_item = QtWidgets.QTableWidgetItem(cat.name)
-            parent_item = QtWidgets.QTableWidgetItem(str(cat.parent) if cat.parent else '')
+            parent_item = QtWidgets. \
+                QTableWidgetItem(str(cat.parent) if cat.parent else '')
             self.setItem(i, 0, pk_item)
             self.setItem(i, 1, name_item)
             self.setItem(i, 2, parent_item)

@@ -87,4 +87,3 @@ class BudgetTable(QtWidgets.QTableWidget):
         self.budget_repo.update(changed_row)
 
         self.budget_updated.emit()
-

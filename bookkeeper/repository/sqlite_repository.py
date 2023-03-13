@@ -62,13 +62,15 @@ class SqliteRepository(AbstractRepository[T]):
                 cur.execute(f'SELECT * FROM {self.table_name}')
                 res = cur.fetchall()
             else:
-                columns, values = list(where.keys()),\
+                columns, values = list(where.keys()), \
                                   list(where.values())
-                cur.execute(f'SELECT * FROM {self.table_name} WHERE {columns[0]}=(?)', [values[0]])
+                cur.execute(f'SELECT * FROM {self.table_name} WHERE {columns[0]}=(?)',
+                            [values[0]])
                 res = cur.fetchall()
                 if columns[1:]:
-                    res = [x_res for x_res in res if all(x_res[column] == value for column, value in zip(columns[1:],
-                                                                                                         values[1:]))]
+                    res = [x_res for x_res in res if all(x_res[column] == value for column,
+                                                                                    value in zip(columns[1:],
+                                                                                                 values[1:]))]
             adapter = adapters[self.table_name]
             res = list(map(adapter, res))
         con.close()
@@ -97,5 +99,3 @@ class SqliteRepository(AbstractRepository[T]):
             if cur.rowcount == 0:
                 raise KeyError('Object with such pk do not exist in the database')
         con.close()
-
-

@@ -2,11 +2,10 @@
 Вспомогательные функции
 """
 
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, Any
 from bookkeeper.models.expense import Expense
 from bookkeeper.models.category import Category
 from bookkeeper.models.budget import Budget
-from typing import Any
 
 
 def _get_indent(line: str) -> int:
@@ -68,6 +67,16 @@ def read_tree(lines: Iterable[str]) -> list[tuple[str, str | None]]:
 
 
 def expense_adapter(exp_row: dict[str, Any]) -> Expense:
+    """
+    Адаптер для базы с тратами
+    Parameters
+    ----------
+    exp_row - строка в базе с тратами в виде словаря
+
+    Returns
+    -------
+    Expense объект с данными из базы
+    """
     return Expense(pk=int(exp_row['pk']), amount=int(exp_row['amount']),
                    expense_date=exp_row['expense_date'],
                    added_date=exp_row['added_date'],
@@ -75,11 +84,31 @@ def expense_adapter(exp_row: dict[str, Any]) -> Expense:
 
 
 def category_adapter(cat_row: dict[str, Any]) -> Category:
+    """
+    Адаптер для базы с категориями
+    Parameters
+    ----------
+    cat_row - строка в базе с категориями в виде словаря
+
+    Returns
+    -------
+    Category объект с данными из базы
+    """
     return Category(pk=cat_row['pk'], name=cat_row['name'],
                     parent=cat_row['parent'])
 
 
 def budget_adapter(budget_row: dict[str, Any]) -> Budget:
+    """
+    Адаптер для базы с бюджетом
+    Parameters
+    ----------
+    budget_row - строка в базе с бюджетом в виде словаря
+
+    Returns
+    -------
+    Budget объект с данными из базы
+    """
     return Budget(pk=int(budget_row['pk']),
                   budget=int(budget_row['budget']),
                   cur_sum=int(budget_row['cur_sum'])

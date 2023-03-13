@@ -2,11 +2,11 @@
 Простой тестовый скрипт для терминала
 """
 
+import os
 from bookkeeper.models.category import Category
 from bookkeeper.models.expense import Expense
 from bookkeeper.repository.sqlite_repository import SqliteRepository
 from bookkeeper.utils import read_tree
-import os
 
 cwd = os.getcwd()
 
